@@ -1,14 +1,20 @@
 export default async function handler(req, res) {
-  const { code, name, number } = req.query;
+    const { code, name } = req.query;
 
-  if (!code || !name || !number) {
-    return res.status(400).json({ error: "Missing fields" });
-  }
+    if (!code || !name) return res.status(400).json({ error: "Missing fields" });
 
-  // This is where the REAL bot logic will eventually go.
+    try {
+        // Backend fetch to Blooket (replace with your real bot logic)
+        const joinRes = await fetch("https://www.blooket.com/api/game/join", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: code, name })
+        });
 
-  return res.json({
-    ok: true,
-    message: `Pretend bot #${number} (${name}) joined game ${code}`
-  });
+        const joinData = await joinRes.json();
+
+        return res.json({ ok: true, message: `Bot "${name}" joined game ${code}` });
+    } catch (e) {
+        return res.status(500).json({ error: e.toString() });
+    }
 }
